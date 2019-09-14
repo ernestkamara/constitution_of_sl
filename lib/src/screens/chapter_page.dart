@@ -122,11 +122,16 @@ class _ChapterPageState extends State<ChapterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-            padding: EdgeInsets.all(10),
-            child: Text(
+        ListTile(
+            contentPadding: EdgeInsets.only(
+              left: 10.0,
+              top: 0.0,
+              right: 10.0,
+              bottom: 0.0,),
+            title: Text(
               section.content,
               softWrap: true,
+              textAlign: TextAlign.start,
               overflow: TextOverflow.fade,
             )),
         Row(
@@ -156,39 +161,33 @@ class _ChapterPageState extends State<ChapterPage> {
     return Helpers.autoScrollTagContainer(
       controller: controller,
       index: _findIndex(section),
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: <Widget>[
-              ScrollOnExpand(
-                scrollOnExpand: true,
-                scrollOnCollapse: false,
-                child: ExpandablePanel(
-                  tapHeaderToExpand: true,
-                  tapBodyToCollapse: true,
-                  headerAlignment: ExpandablePanelHeaderAlignment.center,
-                  //header: _buildListItemHeader(section),
-                  // "§ Chapter $chapterIndex. Section $sectionNumber."
-                  //            section.title, _chapter.number, section.number));
-                  header: Helpers.buildListItemHeader("§ Chapter ${_chapter.number} Section ${section.number}", section.title),
-                  collapsed: _buildListItemCollapsedContent(section),
-                  expanded: _buildListItemExpandedContent(section),
-                  builder: (_, collapsed, expanded) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                      child: Expandable(
-                        collapsed: collapsed,
-                        expanded: expanded,
-                        crossFadePoint: 0,
-                      ),
-                    );
-                  },
-                ),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: <Widget>[
+            ScrollOnExpand(
+              scrollOnExpand: true,
+              scrollOnCollapse: false,
+              child: ExpandablePanel(
+                tapHeaderToExpand: true,
+                tapBodyToCollapse: true,
+                headerAlignment: ExpandablePanelHeaderAlignment.center,
+                header: Helpers.buildListItemHeader("§ CHAPTER ${_chapter.number}. Section ${section.number}", section.title.toUpperCase()),
+                collapsed: _buildListItemCollapsedContent(section),
+                expanded: _buildListItemExpandedContent(section),
+                builder: (_, collapsed, expanded) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    child: Expandable(
+                      collapsed: collapsed,
+                      expanded: expanded,
+                      crossFadePoint: 0,
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

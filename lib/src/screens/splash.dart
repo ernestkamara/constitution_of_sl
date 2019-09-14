@@ -11,7 +11,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  static const footer_text = "Sierra Leone\'s Constitution of 1996 with Amendments through 2008";
+  static const footer_text = "The Constitution Of The Sierra Leone with Amendments through 2008";
+  static const logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Coat_of_arms_of_Sierra_Leone.svg/600px-Coat_of_arms_of_Sierra_Leone.svg.png";
 
   @override
   void initState() {
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
             SizedBox(
-                child: Image.asset('assets/graphics/splash_logo.jpg'),
+              child:Image.network(logoUrl, fit: BoxFit.fitHeight,),
               height: 150,
               width: 150,
             ),

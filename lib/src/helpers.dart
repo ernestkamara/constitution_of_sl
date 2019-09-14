@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 class Helpers {
+  static const imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Coat_of_arms_of_Sierra_Leone.svg/600px-Coat_of_arms_of_Sierra_Leone.svg.png";
 
   static Widget buildSilverAppBar(String title, String imgUrl) {
     return SliverAppBar(
@@ -47,25 +48,6 @@ class Helpers {
     );
   }
 
-/*  static Widget buildListHeader(String title, int index) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-        buildListLeadingText("§ Chapter $index"),
-          Divider(),
-          AutoSizeText(
-            title,
-            minFontSize: 16.0,
-            textAlign: TextAlign.left,
-          ),
-        ],
-      ),
-    );
-  }*/
-
   static Widget buildListItemHeader(String title, String subtitle) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -73,13 +55,18 @@ class Helpers {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          buildListLeadingText(title),
-          Divider(),
-          AutoSizeText(
-            subtitle,
-            minFontSize: 16.0,
-            textAlign: TextAlign.left,
-            //style: Theme.of(context).textTheme.body2,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: buildListLeadingText(title),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: AutoSizeText(
+              subtitle,
+              minFontSize: 16.0,
+              textAlign: TextAlign.left,
+              //style: Theme.of(context).textTheme.body2,
+            ),
           ),
         ],
       ),
@@ -128,7 +115,7 @@ class Helpers {
         Padding(
           padding: const EdgeInsets.all(20.0),
         ),
-        Image.asset(appBarIconPath, fit: BoxFit.contain, height: 90),
+         Image.network(imageUrl, fit: BoxFit.fitHeight, height: 80,),
         Container(
             child: Padding(
               padding: const EdgeInsets.all(8.0),

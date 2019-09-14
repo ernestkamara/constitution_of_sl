@@ -14,7 +14,7 @@
   "chapters": [
     {
       "title": "THE REPUBLIC OF SIERRA LEONE",
-      "number": 1,
+      "number": "I",
       "sections": [
         {
           "number": 1,
@@ -35,7 +35,7 @@
     },
     {
       "title": "FUNDAMENTAL PRINCIPLES OF STATE POLICY",
-      "number": 2,
+      "number": "II",
       "sections": [
         {
           "number": 4,
@@ -96,7 +96,7 @@
     },
     {
       "title": "THE RECOGNITION AND PROTECTION OF FUNDAMENTAL HUMAN RIGHTS AND FREEDOMS OF THE INDIVIDUAL",
-      "number": 3,
+      "number": "III",
       "sections": [
         {
           "number": 15,
@@ -182,7 +182,7 @@
     },
     {
       "title": "THE REPRESENTATION OF THE PEOPLE",
-      "number": 4,
+      "number": "IV",
       "sections": [
         {
           "number": 31,
@@ -233,7 +233,7 @@
     },
     {
       "title": "THE EXECUTIVE",
-      "number": 5,
+      "number": "V",
       "parts": [
         {
           "header": "THE PRESIDENT",
@@ -329,7 +329,7 @@
     },
     {
       "title": "THE LEGISLATURE",
-      "number": 6,
+      "number": "VI",
       "parts": [
         {
           "header": "Part 1",

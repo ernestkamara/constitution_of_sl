@@ -80,7 +80,7 @@ class Items {
 }
 
 class Chapter {
-  int number;
+  String number;
   String title;
   List<Section> sections;
   List<Part> parts;

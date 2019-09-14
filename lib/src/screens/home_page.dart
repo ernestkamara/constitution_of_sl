@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const _appBarIconPath = "assets/graphics/splash_logo.jpg";
+  static const _appBarIconPath = "assets/graphics/splash_logo.png";
   static const _constitutionDataPath = "assets/constitution.json";
   final scrollDirection = Axis.vertical;
 
@@ -71,12 +71,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: WillPopScope(
-          onWillPop: _onBackPressed,
-          child: Scaffold(
-              appBar: Helpers.buildAppBar(_appBarIconPath, widget.title),
-              body: _buildContent(context)),
-        ));
+        body: Scaffold(
+            appBar: Helpers.buildAppBar(_appBarIconPath, widget.title),
+            body: _buildContent(context)));
   }
 
   Widget _buildContent(BuildContext context) {
@@ -127,25 +124,29 @@ class _HomePageState extends State<HomePage> {
                   tapHeaderToExpand: true,
                   tapBodyToCollapse: true,
                   headerAlignment: ExpandablePanelHeaderAlignment.center,
-                  header: Helpers.buildListItemHeader("§ Chapter ${chapter.number}", chapter.title),
-                  expanded: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      for (final section in chapter.getAllSections())
-                        ListTile(
-                            contentPadding: const EdgeInsets.only(
-                              left: 10.0,
-                              top: 0.0,
-                              right: 10.0,
-                              bottom: 0.0,
-                            ),
-                            title: Text(section.title,
-                                softWrap: true, overflow: TextOverflow.fade),
-                            onTap: () {
-                              navigateToSectionPage(context, chapter,
-                                  chapter.getAllSections().indexOf(section));
-                            }),
-                    ],
+                  header: Helpers.buildListItemHeader("§ CHAPTER ${chapter.number}", chapter.title),
+                  expanded: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        for (final section in chapter.getAllSections())
+                          Container(
+                            child: ListTile(
+                                contentPadding: const EdgeInsets.only(
+                                  left: 10.0,
+                                  top: 0.0,
+                                  right: 10.0,
+                                  bottom: 0.0,
+                                ),
+                                title: Text(section.title,
+                                    softWrap: true, overflow: TextOverflow.fade),
+                                onTap: () {
+                                  navigateToSectionPage(context, chapter,
+                                      chapter.getAllSections().indexOf(section));
+                                }),
+                          ),
+                      ],
+                    ),
                   ),
                   builder: (_, collapsed, expanded) {
                     return Padding(
