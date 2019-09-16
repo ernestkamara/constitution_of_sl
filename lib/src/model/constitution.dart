@@ -1,3 +1,5 @@
+import 'package:firebase/firestore.dart';
+
 class Constitution {
   String title;
   List<Schedule> schedules;
@@ -5,7 +7,7 @@ class Constitution {
 
   Constitution({this.title, this.schedules, this.chapters});
 
-  Constitution.fromJson(Map<String, dynamic> json) {
+  Constitution.fromJson(Map<String, dynamic> json, String id) {
     title = json['title'];
     if (json['schedules'] != null) {
       schedules = new List<Schedule>();
@@ -16,7 +18,26 @@ class Constitution {
     if (json['chapters'] != null) {
       chapters = new List<Chapter>();
       json['chapters'].forEach((v) {
-        chapters.add(new Chapter.fromJson(v));
+        chapters.add(new Chapter.fromJson(v, id));
+      });
+    }
+  }
+
+  Constitution.fromDocumentSnapshot(DocumentSnapshot snapshot) {
+    var data = snapshot.data();
+    print("fromDocumentSnapshot $data");
+
+    title = data['title'];
+    if (data['schedules'] != null) {
+      schedules = new List<Schedule>();
+      data['schedules'].forEach((v) {
+        schedules.add(new Schedule.fromJson(v));
+      });
+    }
+    if (data['chapters'] != null) {
+      chapters = new List<Chapter>();
+      data['chapters'].forEach((v) {
+        chapters.add(new Chapter.fromJson(v, snapshot.id));
       });
     }
   }
@@ -80,22 +101,15 @@ class Items {
 }
 
 class Chapter {
-  String number;
+  String id;
   String title;
-  List<Section> sections;
   List<Part> parts;
 
-  Chapter({this.title, this.sections, this.parts});
+  Chapter({this.title, this.parts});
 
-  Chapter.fromJson(Map<String, dynamic> json) {
-    number = json['number'];
+  Chapter.fromJson(Map<String, dynamic> json, String id) {
+    id = id;
     title = json['title'];
-    if (json['sections'] != null) {
-      sections = new List<Section>();
-      json['sections'].forEach((v) {
-        sections.add(new Section.fromJson(v));
-      });
-    }
     if (json['parts'] != null) {
       parts = new List<Part>();
       json['parts'].forEach((v) {
@@ -104,29 +118,33 @@ class Chapter {
     }
   }
 
-  String chapterTitle(int index) {
-    final title = "Chapter $index -  ${this.title}";
-    return title;
+  Chapter.fromDocumentSnapshot(DocumentSnapshot snapshot) {
+    var data = snapshot.data();
+    id = snapshot.id;
+    title = data['title'];
+
+    if (data['parts'] != null) {
+      parts = new List<Part>();
+      data['parts'].forEach((v) {
+        parts.add(new Part.fromJson(v));
+      });
+    }
   }
+
+
   List<Section> getAllSections() {
-   if(sections != null && sections.isNotEmpty) {
-     return sections;
-   } else {
-     List<Section> _sections = [];
-     for(Part part in parts) {
-       _sections.addAll(part.sections);
-     }
-     return _sections;
-   }
+    List<Section> _sections = [];
+    for(Part part in parts) {
+      _sections.addAll(part.sections);
+    }
+    return _sections;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
-    data['number'] = this.number;
-    if (this.sections != null) {
-      data['sections'] = this.sections.map((v) => v.toJson()).toList();
-    }
+    data['id'] = this.id;
+
     if (this.parts != null) {
       data['parts'] = this.parts.map((v) => v.toJson()).toList();
     }
@@ -135,21 +153,21 @@ class Chapter {
 }
 
 class Section {
-  int number;
+  int id;
   String title;
   String content;
 
-  Section({this.number, this.title, this.content});
+  Section({this.id, this.title, this.content});
 
   Section.fromJson(Map<String, dynamic> json) {
-    number = json['number'];
+    id = json['id'];
     title = json['title'];
     content = json['content'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['number'] = this.number;
+    data['id'] = this.id;
     data['title'] = this.title;
     data['content'] = this.content;
     return data;
@@ -157,13 +175,13 @@ class Section {
 }
 
 class Part {
-  String header;
+  String name;
   List<Section> sections;
 
-  Part({this.header, this.sections});
+  Part({this.name, this.sections});
 
   Part.fromJson(Map<String, dynamic> json) {
-    header = json['header'];
+    name = json['name'];
     if (json['sections'] != null) {
       sections = new List<Section>();
       json['sections'].forEach((v) {
@@ -174,7 +192,7 @@ class Part {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['header'] = this.header;
+    data['name'] = this.name;
     if (this.sections != null) {
       data['sections'] = this.sections.map((v) => v.toJson()).toList();
     }

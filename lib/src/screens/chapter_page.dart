@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:expandable/expandable.dart';
@@ -55,7 +56,7 @@ class _ChapterPageState extends State<ChapterPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: Helpers.buildAppBar(_appBarIconPath, _chapter.title),
-      body: _buildList(),
+      body: _buildList(context),
       floatingActionButton: _buildNavigationActionButton(),
     );
   }
@@ -84,11 +85,11 @@ class _ChapterPageState extends State<ChapterPage> {
     setState(() => _isOnTop = true);
   }
 
-  Widget _buildList() {
+  Widget s_buildSectionList(List<Section> sections) {
     return ListView(
       scrollDirection: _scrollDirection,
       controller: controller,
-      children: _sections.map<Widget>((section) {
+      children: sections.map<Widget>((section) {
         return ExpandableNotifier(
             child: ScrollOnExpand(
           scrollOnExpand: false,
@@ -97,6 +98,63 @@ class _ChapterPageState extends State<ChapterPage> {
         ));
       }).toList(),
     );
+  }
+
+
+  Widget _buildPartSectionList(BuildContext context, List<ListItem> list) {
+    return ListView.builder(
+      scrollDirection: _scrollDirection,
+      controller: controller,
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        final listItem = list[index];
+        
+        if (listItem is PartHeadingItem) {
+          return Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 20),
+                child: AutoSizeText(
+                  "PART ${listItem.number.toString()}",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.title,
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 5),
+                  child: AutoSizeText(
+                    listItem.heading,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.title,
+                  ))
+            ],
+          );
+          
+        } else {
+          return ExpandableNotifier(
+              child: ScrollOnExpand(
+                scrollOnExpand: false,
+                scrollOnCollapse: true,
+                child: _buildListItem(context, (listItem as SectionItem).section),
+              ));
+        }
+      }
+    );
+  }
+
+  Widget _buildList(BuildContext context) {
+    List<ListItem> list = [];
+    _chapter.parts.asMap().forEach((index, part) {
+      String name = part.name;
+      if(name != null) {
+        int number = index + 1;
+        list.add(PartHeadingItem(number, name));
+      }
+      for(var section in part.sections) {
+        list.add(SectionItem(section));
+      }
+    });
+    return _buildPartSectionList(context, list);
   }
 
   Widget _buildNavigationActionButton() {
@@ -172,7 +230,7 @@ class _ChapterPageState extends State<ChapterPage> {
                 tapHeaderToExpand: true,
                 tapBodyToCollapse: true,
                 headerAlignment: ExpandablePanelHeaderAlignment.center,
-                header: Helpers.buildListItemHeader("§ CHAPTER ${_chapter.number}. Section ${section.number}", section.title.toUpperCase()),
+                header: Helpers.buildListItemHeader("§ CHAPTER ${_chapter.id}. Section ${section.id}", section.title.toUpperCase()),
                 collapsed: _buildListItemCollapsedContent(section),
                 expanded: _buildListItemExpandedContent(section),
                 builder: (_, collapsed, expanded) {
@@ -192,4 +250,17 @@ class _ChapterPageState extends State<ChapterPage> {
       ),
     );
   }
+}
+
+abstract class ListItem {}
+
+class PartHeadingItem implements ListItem {
+  final int number;
+  final String heading;
+  PartHeadingItem(this.number, this.heading);
+}
+
+class SectionItem implements ListItem {
+  final Section section;
+  SectionItem(this.section);
 }

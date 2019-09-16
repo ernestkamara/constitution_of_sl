@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:expandable/expandable.dart';
+import 'package:firebase/firebase.dart';
+import 'package:firebase/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:constitution_of_sl/src/screens/chapter_page.dart';
@@ -19,11 +21,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   static const _appBarIconPath = "assets/graphics/splash_logo.png";
-  static const _constitutionDataPath = "assets/constitution.json";
   final scrollDirection = Axis.vertical;
 
   AutoScrollController controller;
   List<Chapter> _chapters = [];
+  final Firestore store = firestore();
 
   @override
   void initState() {
@@ -78,19 +80,21 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildContent(BuildContext context) {
     return Container(
-      child: FutureBuilder(
-          future: DefaultAssetBundle.of(context).loadString(_constitutionDataPath),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final parsedData = json.decode(snapshot.data.toString());
-              Constitution constitution = Constitution.fromJson(parsedData);
-              if (constitution != null) {
-                _chapters.clear();
-                _chapters.addAll(constitution.chapters);
+      child: StreamBuilder<QuerySnapshot>(
+          stream: store.collection('chapters').onSnapshot,
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(child: new CircularProgressIndicator());
+              default:
                 return ListView(
                   scrollDirection: scrollDirection,
                   controller: controller,
-                  children: _chapters.map<Widget>((chapter) {
+                  children: snapshot.data.docs.map((DocumentSnapshot document) {
+                    Chapter chapter = Chapter.fromDocumentSnapshot(document);
                     return ExpandableNotifier(
                         child: ScrollOnExpand(
                           scrollOnExpand: false,
@@ -99,11 +103,7 @@ class _HomePageState extends State<HomePage> {
                         ));
                   }).toList(),
                 );
-              }
-            } else {
-              print(snapshot.error.toString());
             }
-            return Center(child: new CircularProgressIndicator());
           }),
     );
   }
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                   tapHeaderToExpand: true,
                   tapBodyToCollapse: true,
                   headerAlignment: ExpandablePanelHeaderAlignment.center,
-                  header: Helpers.buildListItemHeader("§ CHAPTER ${chapter.number}", chapter.title),
+                  header: Helpers.buildListItemHeader("§ CHAPTER ${chapter.id}", chapter.title),
                   expanded: Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
